@@ -1,0 +1,41 @@
+Private Sub Application_ItemSend(ByVal Item As Object, Cancel As Boolean)
+
+    Dim objRecip As Recipient
+    Dim strMsg As String
+    Dim res As Integer
+    Dim strBcc As String
+    Dim strFromText As String
+    Dim strFromAddress As String
+    
+    On Error Resume Next
+
+    ' #### USER OPTIONS ####
+    ' address for Bcc -- must be SMTP address or resolvable to a name in the address book
+    ' address for From -- as per Outlook, this is not the SMTP address - instead it is the 'display name'
+    
+    strBcc = "ebusiness.vic@thepoint.iag.com.au"
+    strFromText = "Adam Gill"
+    strFromAddress = "adam.gill@cgu.com.au"
+    
+    
+    ' #### SCRIPTING ####
+    ' this section runs the actual script, if the From field matches the entry above
+     
+    If Application.ActiveInspector.CurrentItem.SentOnBehalfOfName <> (strFromText Or strFromAddress) Then
+        Set objRecip = Item.Recipients.Add(strBcc)
+        objRecip.Type = olBCC
+        If Not objRecip.Resolve Then
+            strMsg = "Could not resolve the Bcc recipient. " & _
+                     "Do you want still to send the message?"
+            res = MsgBox(strMsg, vbYesNo + vbDefaultButton1, _
+                    "Could Not Resolve Bcc Recipient")
+            If res = vbNo Then
+                Cancel = True
+            End If
+        End If
+    End If
+    
+    Set objRecip = Nothing
+End Sub
+
+

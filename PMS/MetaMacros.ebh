@@ -1,0 +1,232 @@
+Declare Function fncFullName()
+Declare Function fncGetPolicyNumber()
+Declare Function fncLogMacro(strMacroName, Optional strPolicy)
+Declare Function fncLogError(strMacroName, Optional strFileName)
+Declare Function fncWait(objScreen as Object)
+Declare Function fncQueryItem(strSql As String, strConnectionString As String, ByRef avarRecordset() As Variant)
+Declare Function fncEndorseratorVersion(strUser as String)
+
+Function fncLogError(strMacroName, Optional strFileName)
+
+    select case fncFullName()
+        case "Steve Gatti"
+            Msgbox strMacroName & " " & Err & ": " & Error$
+        case Else
+    
+            Dim intFileNum As Integer
+            intFileNum = FreeFile
+            If strFileName = "" then
+                strFileName = "Errors"
+            End If
+            strFileName = strFileName & format(now(),"yyyy-mm") & ".txt"
+            Open "\\melfiler5\cgumel$\SharedMacros\SupportingFiles\Errors\" & strFileName For Append As #intFileNum
+            Print #intFileNum, fncFullName() & chr(9) & Format(Now(),"dd-mmm-yy h:mm:ss am/pm") & chr(9) & strMacroName & chr(9) & Err & ": " & Error$ & chr(9) & ""
+            Close #intFileNum
+    End Select
+        
+End Function
+
+Function fncFullName() As String 
+
+    Dim objTranslate as Object
+    Dim objADsContainer as Object
+    Dim strADsUser as String
+    Dim strUserPath as String
+    Dim strUserName as String
+    Dim strUserNameFull as String
+    Dim strUserDomain as String
+
+    If Environ("USERNAME") = "s38563" then
+        strUserNameFull = "Peter Rosendale"
+    Else
+        'Application.Volatile  'For Excel only
+        strUserName = Environ("USERNAME")
+        strUserDomain = Environ("USERDOMAIN")
+        Set objTranslate = CreateObject("NameTranslate") 
+        objTranslate.Init 1, strUserDomain
+        objTranslate.Set 3, strUserDomain & "\" & strUserName
+        strADsUser = objTranslate.Get(1) 
+        ' Get user object 
+        strUserPath = "LDAP://" & strADsUser 
+        Set objADsContainer = GetObject(strUserPath) 
+        ' Get full name of the current user 
+        strUserNameFull = objADsContainer.cn
+        intApostrophe = Instr(strUserNameFull, "'")
+        Do While intApostrophe > 0
+            strUserNameFull = Mid(strUserNameFull, 1, intApostrophe - 1) & Mid(strUserNameFull, intApostrophe + 1, 999)
+            intApostrophe = Instr(strUserNameFull, "'")
+        Loop
+    End If
+
+    fncFullName = strUserNameFull 
+
+End Function 
+
+Function fncGetPolicyNumber() as String
+    On Error Resume Next
+
+    Dim objScreen As Object
+    Set objScreen = CreateObject("EXTRA.System").Activesession.Screen
+
+    If objScreen.Getstring(2, 2, 6) = "DISP02" Then
+        strGetPolicyNumber = objScreen.Getstring(3, 65, 14)
+    ElseIf objScreen.Getstring(3, 2, 4) = "NBBC" Then
+        strGetPolicyNumber = objScreen.Getstring(3, 63, 14)
+    ElseIf objScreen.Getstring(2, 2, 6) = "EPFDEL" Then
+        strGetPolicyNumber = objScreen.Getstring(4, 59, 14)
+    ElseIf objScreen.Getstring(3, 2, 4) = "GMEN" Then
+        strGetPolicyNumber = objScreen.Getstring(19, 40, 14)
+    ElseIf objScreen.Getstring(3, 2, 4) = "NOND" Then
+        strGetPolicyNumber = objScreen.Getstring(3, 66, 14)
+        
+        fncLogError "EDI:" & objScreen.Getstring(15,78,2)
+        
+    ElseIf objScreen.Getstring(3, 2, 6) = "DISP12" Then
+        strGetPolicyNumber = objScreen.Getstring(3, 64, 14)
+    ElseIf objScreen.Getstring(3, 2, 7) = "STARTSI" Then
+        strGetPolicyNumber = objScreen.Getstring(3, 65, 14)
+    ElseIf objScreen.Getstring(1, 2, 6) = "DISP03" Then
+        strGetPolicyNumber = objScreen.Getstring(2, 57, 14)
+    ElseIf objScreen.Getstring(2, 2, 8) = "VIEWCASH" Then
+        strGetPolicyNumber = objScreen.Getstring(3, 63, 14)
+    ElseIf objScreen.Getstring(1, 2, 8) = "PREMTOTS" Then
+        strGetPolicyNumber = objScreen.Getstring(1, 63, 14)
+    ElseIf objScreen.Getstring(1, 3, 4) = "AUAS" Then
+        strGetPolicyNumber = objScreen.Getstring(23, 54, 3) & " " & objScreen.Getstring(23, 65, 7) & " " & objScreen.Getstring(23, 77, 2)
+    ElseIf objScreen.Getstring(1, 2, 9) = "CCO0400/2" Then
+        strGetPolicyNumber = objScreen.Getstring(1, 54, 3) & " " & objScreen.Getstring(1, 57, 7) & " " & objScreen.Getstring(1, 64, 2)
+    ElseIf objScreen.Getstring(1, 4, 2) = "BC" or objScreen.Getstring(1, 4, 2) = "SA" or objScreen.Getstring(1, 4, 2) = "EM" Then
+        strGetPolicyNumber = objScreen.Getstring(1, 7, 14)
+    Else
+        strGetPolicyNumber = objScreen.Getstring(1, 2, 6) & objScreen.Getstring(2, 2, 6) & objScreen.Getstring(3, 2, 6)
+    End If
+    fncGetPolicyNumber = strGetPolicyNumber
+
+End Function
+
+
+
+Function fncLogMacro(strMacroName, Optional strPolicy)
+    Dim adoConn as object
+    Dim objRS as object
+    Dim strDatafile as String
+    If Vartype(strPolicy) = 10 then
+        strPolicy = fncGetPolicyNumber()
+    End If
+
+    strUsername = fncFullName()
+    strPayroll = Environ("USERNAME")
+    
+    
+    'strServer = "DBCGUMacrosSyst" '"SDC1DB105"=DBCGUMacrosSyst
+    'strDatabase = "CGUMacros"
+    'strUser = "CGUMacrosUserRW"
+    'strPassword = "TRwou86f32"
+    
+    strServer = "DBCGUMacrosProd"
+    strDatabase = "CGUMacros"
+    strUser = "CGUMacrosUserRW"
+    strPassword = "K57ik340uh"
+
+    strConnectionString = "Driver=SQL Server;Server=" & strServer & ";Database=" & strDatabase & ";Uid=" & strUser & ";Pwd=" & strPassword & ";"
+    'Standard query================================================================================
+    'strSql = "INSERT INTO dbo.tblLog ( fldDateTime, fldUsername, fldMacroName, fldPolicyNumber, fldPayroll ) " _
+    ' & "SELECT GETDATE(), '" & strUsername & "', '" & strMacroName & "', '" & strPolicy & "', '" & strPayroll & "';"
+    'Passthrough================================================================================
+    strSql = "Execute usp_InsertLogData '" & strUsername & "', '" & strMacroName & "', '" & strPolicy & "', '" & strPayroll & "'"
+    Set adoConn = Createobject("ADODB.CONNECTION")
+    Set objRS = CreateObject("ADODB.Recordset")
+    adoConn.Open strConnectionString
+    objRS.Open strSQL, adoConn, 2,3     'adOpenDynamic, adLockOptimistic
+    adoConn.Close
+    Set objRS = Nothing
+    Set adoConn = Nothing
+    
+End Function
+
+
+Function fncWait(objScreen as Object)
+    Do While objScreen.OIA.XStatus <> 0
+    Loop
+    objScreen.WaitHostQuiet(1)
+End Function
+
+
+
+
+Function fncQueryItem(strSql As String, strConnectionString As String, ByRef avarRecordset() As Variant)
+    'On Error GoTo ErrorHandler
+    
+    Dim adoConn as Object
+    Dim objRS as Object
+    Set adoConn = CreateObject("ADODB.CONNECTION")
+    Set objRS = CreateObject("ADODB.Recordset")
+    adoConn.Open strConnectionString
+    objRS.CursorLocation = 3 'adUseClient
+    objRS.Open strSql, adoConn
+    
+    Select Case Left(strSql, 6)
+        Case "INSERT"
+            'Do nothing
+        Case "SELECT"
+            If objRS.EOF <> True Then
+                For intEachRecord = 0 to objRS.Rows.Count
+                    For intEachField = 0 to objRS.Columns.Count
+                        'avarRecordset(intEachRecord, intEachField) = objRS.Items(intEachRecord, intEachField)
+                        avarRecordset(intEachRecord, intEachField) = objRS.Fields(intEachField).value 'Items(intEachRecord, intEachField)
+                    Next intEachField
+                Next intEachRecord
+            End If
+        Case Else
+            'Do nothing
+    End Select
+
+   
+    If objRS.State <> 0 Then 'If not closed, close it
+        objRS.Close
+    End If
+
+    Set objRS = Nothing
+    adoConn.Close
+    Set adoConn = Nothing
+    Exit Function
+ErrorHandler:
+    objRS.Close
+    Set objRS = Nothing
+    adoConn.Close
+    Set adoConn = Nothing
+End Function
+
+Function fncEndorseratorVersion(strUser as String) as String
+    'Find correct version
+    Dim adoConn as Object
+    Dim objRS as Object
+    Dim strConnectionString as String
+    Dim strSql as String
+    Dim strFilename as String
+
+    strConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=\\melfiler5\cgumel$\SharedMacros\SupportingFiles\CanxCalc\EndorseratorUsers.mdb;"
+    strSql = "SELECT * From tblEndorseratorUsers WHERE fldUser = '" & strUser & "'"
+    Set adoConn = CreateObject("ADODB.CONNECTION")
+    Set objRS = CreateObject("ADODB.Recordset")
+    adoConn.Open strConnectionString
+    objRS.CursorLocation = 3 'adUseClient
+    objRS.Open strSql, adoConn
+    If objRS.EOF Then
+        strFilename = "Endorserator.xls"
+    Else
+        strFilename = objRS.Fields("fldFilename").Value
+        'strMacro = "RunOnOpen"
+
+    End if
+    If objRS.State <> 0 Then 'If not closed, close it
+        objRS.Close
+    End If
+    'strFilenameTest = "|" & strFilename & "|"
+    Set objRS = Nothing
+    adoConn.Close
+    Set adoConn = Nothing
+    
+    fncEndorseratorVersion = strFilename
+End Function
+

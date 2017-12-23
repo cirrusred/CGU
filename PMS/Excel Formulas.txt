@@ -1,0 +1,20 @@
+Renewed Total
+=COUNTIF('FY0910 - Jun'!$T:$T,"Renewed")+COUNTIF('FY0910 - May'!$T:$T,"Renewed")+COUNTIF('FY0910 - Apr'!$T:$T,"Renewed")+COUNTIF('FY0910 - Mar'!$T:$T,"Renewed")+COUNTIF('FY0910 - Feb'!$T:$T,"Renewed")+COUNTIF('FY0910 - Jan'!$T:$T,"Renewed")+COUNTIF('FY0910 - Dec'!$T:$T,"Renewed")+COUNTIF('FY0910 - Nov'!$T:$T,"Renewed")+COUNTIF('FY0910 - Oct'!$T:$T,"Renewed")+COUNTIF('FY0910 - Sep'!$T:$T,"Renewed")+COUNTIF('FY0910 - Aug'!$T:$T,"Renewed")+COUNTIF('FY0910 - Jul'!$T:$T,"Renewed")
+
+
+Total Policies
+=COUNTA('FY0910 - Jun'!$A:$A)+COUNTA('FY0910 - May'!$A:$A)+COUNTA('FY0910 - Apr'!$A:$A)+COUNTA('FY0910 - Mar'!$A:$A)+COUNTA('FY0910 - Feb'!$A:$A)+COUNTA('FY0910 - Jan'!$A:$A)+COUNTA('FY0910 - Dec'!$A:$A)+COUNTA('FY0910 - Nov'!$A:$A)+COUNTA('FY0910 - Oct'!$A:$A)+COUNTA('FY0910 - Sep'!$A:$A)+COUNTA('FY0910 - Aug'!$A:$A)+COUNTA('FY0910 - Jul'!$A:$A)
+
+
+Future Dated Renewals
+=COUNTIF('FY0910 - Jun'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - May'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Apr'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Mar'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Feb'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Jan'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Dec'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Nov'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Oct'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Sep'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Aug'!$T:$T,"Future Dated Renewal")+COUNTIF('FY0910 - Jul'!$T:$T,"Future Dated Renewal")
+
+
+Renewed EDI
+=SUMPRODUCT(('FY0910 - Jun'!$T:$T="Renewed")*('FY0910 - Jun'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - May'!$T:$T="Renewed")*('FY0910 - May'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Apr'!$T:$T="Renewed")*('FY0910 - Apr'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Mar'!$T:$T="Renewed")*('FY0910 - Mar'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Feb'!$T:$T="Renewed")*('FY0910 - Feb'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Jan'!$T:$T="Renewed")*('FY0910 - Jan'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Dec'!$T:$T="Renewed")*('FY0910 - Dec'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Nov'!$T:$T="Renewed")*('FY0910 - Nov'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Oct'!$T:$T="Renewed")*('FY0910 - Oct'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Sep'!$T:$T="Renewed")*('FY0910 - Sep'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Aug'!$T:$T="Renewed")*('FY0910 - Aug'!$N:$N="Yes"))+SUMPRODUCT(('FY0910 - Jul'!$T:$T="Renewed")*('FY0910 - Jul'!$N:$N="Yes"))
+
+
+Total EDI
+=COUNTIF('FY0910 - Jun'!$N:$N,"Yes")+COUNTIF('FY0910 - May'!$N:$N,"Yes")+COUNTIF('FY0910 - Apr'!$N:$N,"Yes")+COUNTIF('FY0910 - Mar'!$N:$N,"Yes")+COUNTIF('FY0910 - Feb'!$N:$N,"Yes")+COUNTIF('FY0910 - Jan'!$N:$N,"Yes")+COUNTIF('FY0910 - Dec'!$N:$N,"Yes")+COUNTIF('FY0910 - Nov'!$N:$N,"Yes")+COUNTIF('FY0910 - Oct'!$N:$N,"Yes")+COUNTIF('FY0910 - Sep'!$N:$N,"Yes")+COUNTIF('FY0910 - Aug'!$N:$N,"Yes")+COUNTIF('FY0910 - Jul'!$N:$N,"Yes")
+
+EDI Penetration

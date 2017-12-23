@@ -1,0 +1,43 @@
+LB  Sections for Situation of Risk 
+000  350,400,500,700,800        
+
+LB  Sections for Situation of Risk  
+102  103,201,202,203,204,205,501,502   
+
+-----------------------------------------------
+LA100: 
+Farm Property (Section2)
+- Farm Buildings 	 85000
+- Farm Contents	 	 80000
+
+Farm Machinery (Section3)
+- Spec. Farm Machinery    4600 (2002 Honda 4WD)
+- USpc. Farm Machinery    2500
+
+Farm Contents (Section4)
+- Farm Contents		 10000
+
+Hay, Fencing... (Section5)
+- Fencing, Bdry Shard 	 33100  - CONF
+- Hay			 10500  - CONF
+
+Liability (Section7)
+- Liability 	      10000000
+
+M/Breakdown (Section8)
+- Blanket Cover Opt	     0.5
+
+                                     
+             
+-----------------------------------------------
+LA101: Philip Island
+Domestic Bldg/Cnts (Section 1)
+- Building		435500 - CONF
+- Contents		 49700 - CONF
+
+Farm Property (Section2)
+- Farm Buildings 	 38100 
+- Farm Contents	 	  5000
+
+Hay, Fencing... (Section5)
+- All Fencing		  2500 - CONF
