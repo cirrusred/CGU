@@ -1,0 +1,17 @@
+10    =    NEW BUSINESS                      
+                                             
+11    =    RENEWAL                           
+                                             
+12    =    EXTRA PREMIUM                     
+                                             
+15    =    REINSTATEMENT                     
+                                             
+20    =    FULL CANCELLATION OF NEW BUSINESS 
+                                             
+21    =    FULL CANCELLATION OF RENEWAL      
+                                             
+22    =    RETURN PREMIUM                    
+                                             
+23    =    PRO-RATA NEW BUSINESS CANCELLATION
+                                             
+25    =    PRO-RATA RENEWAL CANCELLATION     
