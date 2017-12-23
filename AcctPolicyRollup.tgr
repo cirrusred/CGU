@@ -1,0 +1,41 @@
+trigger AcctPolicyRollup on Policy__c (after insert, after update, after delete, after undelete) {
+	//Limit the size of list by using Sets which do not contain duplicate elements
+	set<Id> AccountIds = new set<Id>();
+	
+	//When adding new Policy or updating existing Policies
+	if(trigger.isInsert || trigger.isUpdate){
+	    for(Policy__c p : trigger.new){
+	        AccountIds.add(p.Account_Name__c);
+	    }
+	}
+	//When deleting Policy
+	if(trigger.isDelete){
+	    for(Policy__c p : trigger.old){
+	        AccountIds.add(p.Account_Name__c);
+	    }
+	}
+	
+	//Map will contain one Account Id to one sum value
+	map<Id,Double> AccountMap = new map <Id,Double>();
+
+	
+	//Produce a sum of Policy__c and add them to the map
+	//use group by to have a single Account Id with a single sum value
+	//(Timing StatusEQUALSCurrent policy) AND (Premium Data SourceEQUALSCore)
+	for(AggregateResult q : [select Account_Name__c, sum(Employer_Premium__c), sum(Policy_Claims_Cost_Incurred__c), sum(Number_of_Claims__c), sum(Number_of_Employees__c), sum(Employer_Remuneration__c)
+	    from Policy__c where Timing_Status__c = 'Current policy' and Premium_Data_Source__c = 'Core' and Account_Name__c != Null and Account_Name__c IN :AccountIds group by Account_Name__c]) {
+	    	//count WC_Group_Policy_Count__c
+	        AccountMap.put((Id)q.get('Account_Name__c'),(Double)q.get('expr0'));
+	    }
+	
+	    List<Account> AccountsToUpdate = new List<Account>();
+	    //Run the for loop on Account using the non-duplicate set of Account Ids
+	    //Get the sum value from the map and create a list of Accounts to update
+	    for(Account a : [Select Id, WC_Group_Premium__c from Account where Id IN :AccountIds]){
+	        Double grpPremiumTotal = AccountMap.get(a.Id);
+	        a.WC_Group_Premium__c = grpPremiumTotal;
+	        AccountsToUpdate.add(a);
+	    }
+	
+	    update AccountsToUpdate;
+}
